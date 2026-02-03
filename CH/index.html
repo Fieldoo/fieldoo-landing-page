@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-Y"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-XXXXX-Y');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fieldoo AG | Private Equity Zuteilung</title>
+  <meta name="description" content="Institutionelle Infrastruktur für die Fußballökonomie. Tokenisierte Eigenkapitalrunde. Nur qualifizierte Investoren." />
+    
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              base: '#020408',        /* Almost Black */
+              navy: '#0B1120',        /* Deep Swiss Navy */
+              gold: '#C5A059',        /* Rich Metallic Gold */
+              goldLight: '#E5C578',   /* Highlight Gold */
+              slate: '#64748B',       /* Muted Text */
+              text: '#F8FAFC',        /* White/Off-white */
+            }
+          },
+          fontFamily: {
+            display: ['Montserrat', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Inter', 'monospace'],
+          },
+          animation: {
+            'blob': 'blob 25s infinite',
+            'scroll': 'scroll 40s linear infinite', 
+            'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -30px) scale(1.05)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.95)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            scroll: {
+              '0%': { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #020408;
+      color: #F8FAFC;
+      margin: 0;
+      overflow-x: hidden;
+      cursor: default;
+      font-feature-settings: "ss01", "ss02", "tnum"; /* Tabular numbers for financial data */
+    }
+
+    /* --- DYNAMIC BACKGROUND ENGINE (Gold/Navy) --- */
+    .ambient-light {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: -1;
+        background: radial-gradient(circle at 50% 120%, #0B1120, #020408);
+        overflow: hidden;
+    }
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.3;
+        animation: blob 25s infinite ease-in-out alternate;
+    }
+    .orb-1 { top: -10%; left: -10%; width: 60vw; height: 60vw; background: rgba(197, 160, 89, 0.15); }
+    .orb-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: rgba(11, 17, 32, 0.4); animation-delay: -5s; }
+    
+    .noise {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2cpIiBvcGFjaXR5PSIwLjAzIi8+PC9zdmc+');
+        opacity: 0.3; pointer-events: none; z-index: -1;
+    }
+
+    /* --- SPOTLIGHT CARD ENGINE --- */
+    .spotlight-card {
+        background: rgba(255, 255, 255, 0.015);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.4s ease;
+        backdrop-filter: blur(10px);
+    }
+    .spotlight-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        border-radius: 0.75rem;
+        padding: 1px;
+        background: radial-gradient(
+            600px circle at var(--mouse-x) var(--mouse-y),
+            rgba(197, 160, 89, 0.6),
+            transparent 40%
+        );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+    }
+    .spotlight-card:hover::before { opacity: 1; }
+    .spotlight-card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); }
+
+    /* Typography */
+    .text-glow { text-shadow: 0 0 20px rgba(197, 160, 89, 0.3); }
+    .text-gold-gradient {
+        background: linear-gradient(135deg, #FFF 0%, #C5A059 50%, #E5C578 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Buttons */
+    .btn-gold {
+        position: relative;
+        background: linear-gradient(180deg, #D4AF37 0%, #B4942D 100%);
+        color: #020408;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .btn-gold::after {
+        content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: 0.6s;
+    }
+    .btn-gold:hover::after { left: 100%; }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); }
+
+    .btn-navy {
+        background: rgba(11, 17, 32, 0.6);
+        border: 1px solid rgba(197, 160, 89, 0.3);
+        color: #C5A059;
+        transition: all 0.3s ease;
+    }
+    .btn-navy:hover {
+        border-color: #C5A059;
+        background: rgba(197, 160, 89, 0.05);
+        color: #fff;
+    }
+
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 0px; }
+    ::-webkit-scrollbar-track { background: #020408; }
+    
+    /* Accordion */
+    .accordion-content { transition: max-height 0.4s ease-out, opacity 0.4s ease; max-height: 0; opacity: 0; overflow: hidden; }
+    .accordion-content.active { opacity: 1; }
+    .rotate-45 { transform: rotate(45deg); }
+    
+    /* Modal */
+    .modal-overlay { transition: opacity 0.3s ease; }
+    
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: 3rem;
+    }
+    @media (max-width: 768px) {
+        .footer-grid { grid-template-columns: 1fr; }
+    }
+    
+    ::selection { background: rgba(197, 160, 89, 0.3); color: white; }
+  </style>
+</head>
+
+<body class="antialiased" onmousemove="updateMouse(event)">
+
+<div class="ambient-light">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+<div class="noise"></div>
+
+<nav class="fixed top-0 left-0 w-full z-50 transition-all duration-300 backdrop-blur-md border-b border-white/5 bg-[#020408]/60">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2 group">
+        <span class="font-display font-bold text-xl text-white tracking-tight">Fieldoo</span>
+        <span class="font-display font-bold text-xl text-brand-gold">AG</span>
+    </a>
+
+    <div class="hidden md:flex gap-8 items-center text-xs font-sans uppercase tracking-widest text-brand-slate font-medium">
+        <a href="#structure" class="hover:text-white transition-colors">Struktur</a>
+        <a href="#financials" class="hover:text-white transition-colors">Finanzen</a>
+        <a href="#company" class="hover:text-white transition-colors">Anlage</a>
+        <button onclick="openModal('faq')" class="hover:text-brand-gold transition-colors">Investoren FAQ</button>
+    </div>
+
+    <div class="flex items-center gap-4">
+        <button onclick="openModal('contact')" class="hidden md:flex items-center gap-2 px-6 py-2.5 rounded shadow-lg btn-gold text-[10px] font-bold uppercase tracking-widest">
+            Zugang zur Zuteilung anfordern
+        </button>
+        <button onclick="toggleMenu()" class="md:hidden text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
+    </div>
+  </div>
+</nav>
+
+<div id="mobile-menu" class="fixed inset-0 z-[60] bg-[#020408]/98 backdrop-blur-xl hidden flex-col items-center justify-center space-y-8 transition-opacity">
+    <button onclick="toggleMenu()" class="absolute top-6 right-6 text-white"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    <a href="#structure" onclick="toggleMenu()" class="text-xl font-display font-medium text-white hover:text-brand-gold">Struktur</a>
+    <a href="#financials" onclick="toggleMenu()" class="text-xl font-display font-medium text-white hover:text-brand-gold">Finanzen</a>
+    <button onclick="toggleMenu(); openModal('faq')" class="text-xl font-display font-medium text-white hover:text-brand-gold">Investoren FAQ</button>
+</div>
+
+<section class="relative pt-32 pb-20 px-6 min-h-screen flex items-center justify-center overflow-hidden">
+    <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+        
+        <div class="order-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left z-10 reveal">
+            <div class="inline-flex items-center gap-3 px-3 py-1.5 rounded border border-brand-gold/20 bg-brand-gold/5 mb-6 backdrop-blur-md">
+                <span class="relative flex h-1.5 w-1.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-gold"></span>
+                </span>
+                <span class="text-[10px] font-sans uppercase tracking-[0.2em] font-semibold text-brand-gold">Nur für qualifizierte Investoren</span>
+            </div>
+            
+            <p class="text-sm text-brand-gold mb-2 font-medium">Tokenisiertes Eigenkapital findet institutionelle Akzeptanz. Fieldoo ist bereits operativ tätig.</p>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white leading-[1.1] mb-2 tracking-tight">
+                Fieldoo AG <br />
+                <span class="text-gold-gradient relative">Tokenisiertes Eigenkapital</span>
+            </h1>
+            
+            <p class="text-[10px] text-brand-slate uppercase tracking-widest mb-6">Positionierung: Wenn Bloomberg die Fußballwirtschaft gebaut hätte.</p>
+            
+            <p class="text-base md:text-lg text-brand-slate font-light mb-8 max-w-xl leading-relaxed">
+                Aufbau der globalen Infrastruktur die Fußballtalente in messbare und investierbare Finanzanlagen verwandelt.
+            </p>
+
+            <div class="flex flex-col gap-3 justify-center lg:justify-start items-center lg:items-start w-full mb-8">
+                <div class="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
+                    <button onclick="openModal('contact')" class="btn-gold px-8 py-3.5 rounded font-bold text-[10px] uppercase tracking-widest text-center min-w-[200px]">
+                        Zugang zur Zuteilung anfordern
+                    </button>
+                    <span class="text-[9px] text-brand-slate uppercase tracking-widest pt-3 sm:pt-0 flex items-center">Anträge werden manuell geprüft</span>
+                </div>
+                <p class="text-[9px] text-brand-slate/40 mt-1 max-w-xs text-center lg:text-left">
+                    Aktienanlagen beinhalten Risiken einschließlich des möglichen Verlusts des gesamten investierten Kapitals. Diese Zuteilung eignet sich nur für Investoren mit Verständnis für private Märkte.
+                </p>
+            </div>
+            
+            <div class="w-full border-t border-white/5 pt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+                <div>
+                    <span class="block text-[9px] text-brand-gold uppercase tracking-widest mb-1">Schritt 1</span>
+                    <span class="text-xs text-brand-slate">Zugang anfordern</span>
+                </div>
+                <div>
+                    <span class="block text-[9px] text-brand-gold uppercase tracking-widest mb-1">Schritt 2</span>
+                    <span class="text-xs text-brand-slate">NDA Verifizierung</span>
+                </div>
+                <div>
+                    <span class="block text-[9px] text-brand-gold uppercase tracking-widest mb-1">Schritt 3</span>
+                    <span class="text-xs text-brand-slate">Investorendeck und Finanzen</span>
+                </div>
+                <div>
+                    <span class="block text-[9px] text-brand-gold uppercase tracking-widest mb-1">Schritt 4</span>
+                    <span class="text-xs text-brand-slate">Direktgespräch mit IR</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-2 flex flex-col justify-center lg:justify-end items-center relative z-10 perspective-1000 reveal delay-100 mt-8 lg:mt-0 w-full">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-brand-gold/10 blur-[100px] rounded-full animate-pulse-slow"></div>
+            
+            <div class="spotlight-card p-1 rounded-xl bg-[#0B1120] w-full max-w-sm shadow-2xl border border-white/10">
+                <div class="bg-gradient-to-b from-white/5 to-[#020408] rounded-[0.7rem] p-8 border border-white/5 relative overflow-hidden backdrop-blur-sm">
+                    
+                    <div class="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
+                        <div>
+                            <span class="block text-[9px] font-sans text-brand-gold uppercase tracking-widest mb-1">Zuteilung Jan 2026</span>
+                            <span class="block text-[9px] font-sans text-brand-slate/60 mb-2">Begrenztes Zeitfenster</span>
+                            <h3 class="text-xl font-display font-bold text-white">Deal Room</h3>
+                        </div>
+                        <span class="px-2 py-1 rounded border border-brand-gold/30 text-brand-gold text-[9px] font-bold uppercase tracking-wider bg-brand-gold/5">Privatplatzierung</span>
+                    </div>
+
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-brand-slate">Struktur</span>
+                            <span class="text-white font-medium">Tokenisierte Aktien (AG)</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm gap-4">
+                            <span class="text-brand-slate">Anlageklasse</span>
+                            <span class="text-white font-medium">Infrastruktur Eigenkapital</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-brand-slate">Ticker</span>
+                            <span class="text-white font-medium">FDO (ERC 20)</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm gap-4">
+                            <span class="text-brand-slate">Mindestzuteilung</span>
+                            <span class="text-white font-medium">Vertraulich nach NDA</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-brand-slate">Kategorie</span>
+                            <span class="text-white font-medium">Realer Vermögenswert</span>
+                        </div>
+                    </div>
+                    
+                    <div class="h-px w-full bg-white/10 mb-6"></div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="openModal('contact')" class="py-3 rounded bg-white text-black font-bold text-[10px] uppercase tracking-widest hover:bg-brand-gold transition-colors">
+                            Zuteilung anfordern
+                        </button>
+                        <button onclick="openModal('contact')" class="py-3 rounded border border-white/20 text-white font-bold text-[10px] uppercase tracking-widest hover:border-brand-gold hover:text-brand-gold transition-colors">
+                            NDA unterzeichnen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="border-y border-white/5 bg-[#0B1120]/50 py-10 overflow-hidden relative z-20">
+    <div class="flex animate-scroll whitespace-nowrap">
+        <div class="flex items-center gap-20 px-10 text-brand-slate/30 font-display font-bold text-xl uppercase tracking-widest">
+            <span>Marktinfrastruktur</span> • <span>Standardisierte Bewertung</span> • <span>Verifizierte Datenschicht</span> • <span>Aktien Tokenisierung</span> • <span>Schweizer Compliance</span> •
+            <span>Marktinfrastruktur</span> • <span>Standardisierte Bewertung</span> • <span>Verifizierte Datenschicht</span> • <span>Aktien Tokenisierung</span> • <span>Schweizer Compliance</span> •
+        </div>
+    </div>
+</div>
+
+<section class="py-20 px-6 relative z-10 bg-[#020408]">
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-12 text-center reveal">
+            <h2 class="text-xs font-sans text-brand-gold uppercase tracking-[0.3em] mb-4">Operativer Nachweis</h2>
+            <h3 class="text-3xl font-display font-bold text-white mb-4">Live Infrastruktur</h3>
+            <p class="text-sm text-brand-slate">Diese Infrastruktur ist bereits in Betrieb. Kapital fließt in ein funktionierendes Finanzsystem und nicht in ein Konzept.</p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 reveal">
+            <div class="spotlight-card p-6 text-center border border-white/5">
+                <span class="block text-2xl font-bold text-white mb-1">450k+</span>
+                <span class="text-[9px] uppercase tracking-widest text-brand-slate">Verifizierte Spielerprofile</span>
+            </div>
+            <div class="spotlight-card p-6 text-center border border-white/5">
+                <span class="block text-2xl font-bold text-white mb-1">20k+</span>
+                <span class="text-[9px] uppercase tracking-widest text-brand-slate">Aktive Agenten</span>
+            </div>
+            <div class="spotlight-card p-6 text-center border border-white/5">
+                <span class="block text-2xl font-bold text-white mb-1">150+</span>
+                <span class="text-[9px] uppercase tracking-widest text-brand-slate">Proficlubs</span>
+            </div>
+            <div class="spotlight-card p-6 text-center border border-white/5">
+                <span class="block text-2xl font-bold text-white mb-1">3 000+</span>
+                <span class="text-[9px] uppercase tracking-widest text-brand-slate">Erfolgreiche Vermittlungen</span>
+            </div>
+            <div class="spotlight-card p-6 text-center border border-white/5 col-span-2 md:col-span-1">
+                <span class="block text-2xl font-bold text-white mb-1">168</span>
+                <span class="text-[9px] uppercase tracking-widest text-brand-slate">Aktive Länder</span>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center reveal">
+            <p class="text-[9px] text-brand-slate/40 uppercase tracking-wider">Alle Metriken stammen aus internen Plattformdaten.</p>
+        </div>
+
+        <div class="mt-12 text-center reveal">
+            <span class="inline-block px-4 py-2 rounded bg-white/5 border border-white/10 text-[10px] text-brand-gold font-mono uppercase tracking-widest">
+                Dies ist kein Startup Pitch. Dies ist finanzielle Infrastruktur.
+            </span>
+        </div>
+    </div>
+</section>
+
+<section id="company" class="pt-24 pb-12 px-6 relative z-10 bg-[#0B1120]/20">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 gap-16 items-start text-center">
+            <div class="reveal max-w-4xl mx-auto">
+                <h2 class="text-xs font-sans text-brand-slate uppercase tracking-[0.3em] mb-6">Finanzieller Nutzen</h2>
+                <h3 class="text-3xl md:text-4xl font-display font-bold text-white mb-6 leading-tight">
+                    Standardisierung der Talentökonomie
+                </h3>
+                <p class="text-brand-slate leading-relaxed mb-8 font-light">
+                    Fieldoo ist die erste globale Infrastruktur zur Standardisierung von Identifikation Verifizierung Bewertung und Rekrutierung von Fußballtalenten. Sie verwandelt Talente von subjektivem Scouting in messbare Finanzdaten.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="structure" class="py-20 px-6 relative z-10 border-t border-white/5">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-12 text-center reveal">
+            <h2 class="text-xs font-sans text-brand-slate uppercase tracking-[0.3em] mb-4">Eigentümerstruktur</h2>
+            <h3 class="text-3xl font-display font-bold text-white">Rechtliche Aktienstruktur</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div class="spotlight-card p-8 reveal">
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="w-1.5 h-1.5 bg-brand-gold rounded-full"></span>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider">Unternehmensdaten</h4>
+                </div>
+                <ul class="space-y-4 text-xs text-brand-slate">
+                    <li class="flex justify-between border-b border-white/5 pb-2 gap-4">
+                        <span>Rechtsform</span> <span class="text-white">Schweizer Aktiengesellschaft (AG)</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Gesamtaktien</span> <span class="text-white">10 000 000</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Nennwert</span> <span class="text-white">CHF 0.01</span>
+                    </li>
+                    <li class="flex justify-between pb-2">
+                        <span>Register</span> <span class="text-white">Aktionariat.com</span>
+                    </li>
+                </ul>
+                <p class="mt-6 text-[9px] text-brand-slate/60 leading-tight">
+                    Unterliegt dem Schweizer Aktienrecht und dem eingetragenen Aktienbuch
+                </p>
+            </div>
+
+            <div class="spotlight-card p-8 reveal delay-100 bg-brand-gold/5 border-brand-gold/20">
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="w-1.5 h-1.5 bg-brand-gold rounded-full"></span>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider">Tokenisierungsdetails</h4>
+                </div>
+                <p class="text-xs text-brand-slate mb-4 leading-relaxed">
+                    1 000 000 Aktien sind als ERC 20 Token (FDO) auf Ethereum registriert gemäß Schweizer Obligationenrecht OR 973d. Jeder Token repräsentiert eine voll eingetragene Namensaktie.
+                </p>
+                <div class="text-xs text-brand-gold font-bold uppercase tracking-wider p-3 bg-brand-gold/10 rounded text-center">
+                    Dies ist Eigenkapital kein Krypto.
+                </div>
+            </div>
+
+            <div class="spotlight-card p-8 reveal delay-200">
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="w-1.5 h-1.5 bg-brand-gold rounded-full"></span>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider">Marktdaten</h4>
+                </div>
+                 <ul class="space-y-4 text-xs text-brand-slate">
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Referenzpreis</span> <span class="text-white font-mono">CHF 0.75</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Implizite Marktkapitalisierung</span> <span class="text-white font-mono">CHF 7.5M</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Symbol</span> <span class="text-white font-mono">FDO</span>
+                    </li>
+                    <li class="flex justify-between pb-2">
+                        <span>Handel</span> <span class="text-white">Aktionariat Brokerbot</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="spotlight-card p-8 reveal delay-300">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-white/10 pb-2">Fokus Kapitalallokation</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="flex items-center gap-2 text-xs text-brand-slate">
+                    <span class="text-brand-gold">▸</span> Plattform Expansion
+                </div>
+                <div class="flex items-center gap-2 text-xs text-brand-slate">
+                    <span class="text-brand-gold">▸</span> Skalierung der Dateninfrastruktur
+                </div>
+                <div class="flex items-start gap-3 text-xs text-brand-slate">
+                    <span class="text-brand-gold">▸</span> Marktpartnerschaften
+                </div>
+                <div class="flex items-center gap-2 text-xs text-brand-slate">
+                    <span class="text-brand-gold">▸</span> Compliance und Rechtsrahmen
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="financials" class="py-24 px-6 relative z-10">
+    <div class="max-w-4xl mx-auto text-center reveal">
+        <h2 class="text-xs font-sans text-brand-slate uppercase tracking-[0.3em] mb-4">Finanzieller Ausblick</h2>
+        <h3 class="text-3xl font-display font-bold text-white mb-12">Prognosen 2026 bis 2030</h3>
+        
+        <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                    <tr class="text-xs text-brand-slate uppercase tracking-widest border-b border-white/10">
+                        <th class="py-4 pl-4 font-normal whitespace-nowrap">Kennzahl</th>
+                        <th class="py-4 text-right font-normal text-white whitespace-nowrap w-24">2026</th>
+                        <th class="py-4 text-right font-normal text-white whitespace-nowrap w-24">2027</th>
+                        <th class="py-4 text-right font-normal text-white whitespace-nowrap w-24">2028</th>
+                        <th class="py-4 text-right font-normal text-white whitespace-nowrap w-24">2029</th>
+                        <th class="py-4 pr-4 text-right font-normal text-brand-gold whitespace-nowrap w-24">2030</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm font-mono text-brand-slate">
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td class="py-4 pl-4 font-sans text-white whitespace-nowrap">Aktienpreis (CHF)</td>
+                        <td class="py-4 text-right whitespace-nowrap">2.87</td>
+                        <td class="py-4 text-right whitespace-nowrap">4.50</td>
+                        <td class="py-4 text-right whitespace-nowrap">7.90</td>
+                        <td class="py-4 text-right whitespace-nowrap">11.50</td>
+                        <td class="py-4 pr-4 text-right text-brand-gold font-bold whitespace-nowrap">16.00</td>
+                    </tr>
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="py-4 pl-4 font-sans text-white whitespace-nowrap">Umsatz (CHF)</td>
+                        <td class="py-4 text-right whitespace-nowrap">994 500</td>
+                        <td class="py-4 text-right whitespace-nowrap">1 869 250</td>
+                        <td class="py-4 text-right whitespace-nowrap">3 480 125</td>
+                        <td class="py-4 text-right whitespace-nowrap">5 908 526</td>
+                        <td class="py-4 pr-4 text-right text-brand-gold font-bold whitespace-nowrap">7 721 943</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="text-[9px] text-brand-slate/40 text-left mt-4 uppercase tracking-wider">
+            Haftungsausschluss: Diese Prognosen sind zukunftsgerichtete Aussagen basierend auf aktuellen Marktanalysen und sind keine Garantien für die zukünftige Performance.
+        </p>
+    </div>
+</section>
+
+<section class="py-20 px-6 relative z-10 border-t border-white/5 bg-gradient-to-b from-[#020408] to-[#0B1120]">
+    <div class="max-w-3xl mx-auto text-center reveal">
+        <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-8 leading-tight">
+            Warum dies eine <span class="text-gold-gradient">Dauerhafte Anlage</span> ist
+        </h2>
+        <p class="text-sm md:text-base text-brand-slate leading-relaxed mb-10 max-w-2xl mx-auto">
+            Kapital verlagert sich hin zu Vermögenswerten die durch Infrastruktur Rechte und vorhersehbare wirtschaftliche Aktivitäten gedeckt sind. Fieldoo repräsentiert eine fundamentale Ebene in der Talentökonomie des Fußballs. <br><br>
+            <span class="text-white font-medium">Dies ist nicht spekulativ. Dies ist finanzielle Infrastruktur.</span>
+        </p>
+        
+        <div class="flex flex-col md:flex-row gap-4 justify-center">
+            <button onclick="openModal('contact')" class="btn-gold px-10 py-4 rounded font-bold text-[10px] uppercase tracking-widest inline-block">
+                Zugang zur Zuteilung anfordern
+            </button>
+        </div>
+        <p class="text-[9px] text-brand-slate mt-4 uppercase tracking-widest">Anträge werden manuell geprüft.</p>
+    </div>
+    
+    <div class="mt-20 text-center reveal">
+        <p class="text-xs font-display font-bold text-white tracking-widest uppercase opacity-80">
+            Dies ist kein Startup Pitch. <br>
+            Dies ist eine Zuteilung für finanzielle Infrastruktur.
+        </p>
+    </div>
+</section>
+
+<footer class="border-t border-white/5 bg-[#020408] pt-20 pb-12">
+    <div class="max-w-7xl mx-auto px-6 footer-grid">
+        
+        <div class="flex flex-col items-start">
+            <div class="flex items-center gap-1 mb-6">
+                <span class="font-display font-bold text-2xl text-white">Fieldoo</span>
+                <span class="font-display font-bold text-2xl text-brand-gold">AG</span>
+            </div>
+            <p class="text-xs text-brand-slate leading-relaxed mb-6 max-w-sm">
+                Nüschelerstrasse 45, 8001 Zürich, Schweiz<br>
+                CHE 195.865.186
+            </p>
+            <p class="text-[9px] text-brand-slate/60 max-w-xs leading-relaxed">
+                Strukturiert in Übereinstimmung mit dem Schweizer Aktienrecht und der Tokenisierungsinfrastruktur der Aktionariat AG.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <h4 class="text-white font-bold font-display text-sm mb-2">Struktur</h4>
+            <a href="#structure" class="text-xs text-brand-slate hover:text-brand-gold transition-colors">Aktien</a>
+            <a href="#financials" class="text-xs text-brand-slate hover:text-brand-gold transition-colors">Prognosen</a>
+            <button onclick="openModal('faq')" class="text-left text-xs text-brand-slate hover:text-brand-gold transition-colors">Investoren FAQ</button>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <h4 class="text-white font-bold font-display text-sm mb-2">Rechtliches</h4>
+            <button onclick="openModal('terms')" class="text-left text-xs text-brand-slate hover:text-white transition-colors">Allgemeine Geschäftsbedingungen</button>
+            <button onclick="openModal('privacy')" class="text-left text-xs text-brand-slate hover:text-white transition-colors">Datenschutzerklärung</button>
+            <button onclick="openModal('imprint')" class="text-left text-xs text-brand-slate hover:text-white transition-colors">Impressum</button>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <h4 class="text-white font-bold font-display text-sm mb-2">Compliance</h4>
+             <div class="flex items-center gap-3 p-3 border border-white/5 rounded bg-white/5">
+                <div class="w-2 h-2 rounded-full bg-brand-gold"></div>
+                <span class="text-[10px] text-brand-slate font-mono uppercase">In der Schweiz eingetragen</span>
+             </div>
+             <div class="flex items-center gap-3 p-3 border border-white/5 rounded bg-white/5">
+                <div class="w-2 h-2 rounded-full bg-brand-gold"></div>
+                <span class="text-[10px] text-brand-slate font-mono uppercase">Tokenisiertes Eigenkapital</span>
+             </div>
+             <div class="flex items-center gap-3 p-3 border border-white/5 rounded bg-white/5">
+                <div class="w-2 h-2 rounded-full bg-brand-gold"></div>
+                <span class="text-[10px] text-brand-slate font-mono uppercase">Kein öffentliches Angebot</span>
+             </div>
+             <div class="flex items-center gap-3 p-3 border border-white/5 rounded bg-white/5">
+                <div class="w-2 h-2 rounded-full bg-brand-gold"></div>
+                <span class="text-[10px] text-brand-slate font-mono uppercase">Aktienbuch konform</span>
+             </div>
+        </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] text-brand-slate/50 font-mono">
+        <p>© 2026 Fieldoo AG. Alle Rechte vorbehalten.</p>
+        <div class="flex items-center gap-6 mt-2 md:mt-0">
+             <span>Nur qualifizierte Investoren</span>
+             <span>Schweizer Gerichtsbarkeit</span>
+        </div>
+    </div>
+</footer>
+
+<div id="modal-overlay" class="fixed inset-0 z-[100] bg-[#020408]/95 backdrop-blur-md hidden transition-opacity duration-300 flex items-center justify-center">
+    
+    <div class="fixed top-0 left-0 w-full h-16 border-b border-white/10 flex items-center justify-between px-6 bg-[#020408] z-50">
+        <span class="font-display font-bold text-white text-sm">Fieldoo <span class="text-brand-gold">AG</span></span>
+        <button onclick="closeAllModals()" class="text-[10px] font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-2 rounded hover:bg-white hover:text-black transition-colors">Schließen</button>
+    </div>
+
+    <div class="w-full h-full overflow-y-auto pt-24 pb-12 px-6">
+        <div class="max-w-2xl mx-auto p-8 rounded-xl bg-[#0B1120] border border-white/10 spotlight-card shadow-2xl">
+            
+            <div id="modal-privacy" class="hidden">
+                <h2 class="text-2xl font-display font-bold text-white mb-2">Datenschutzerklärung</h2>
+                <p class="text-[10px] text-brand-slate font-mono uppercase mb-6">Stand: Januar 2026</p>
+                <div class="prose prose-invert prose-sm text-brand-slate text-xs leading-relaxed space-y-4">
+                    <p><strong>1. Datenverantwortlicher</strong><br>
+                    Fieldoo AG Nüschelerstrasse 45 8001 Zürich Schweiz.<br>
+                    Für den Plattformbetrieb: Fieldoo d.o.o. Tbilisijska ulica 57 1000 Ljubljana Slowenien.<br>
+                    Kontakt: support@fieldoo.com / info@talentido.com</p>
+
+                    <p><strong>2. Zweck der Datenverarbeitung</strong><br>
+                    Daten werden ausschließlich erhoben um: Investoreneignung zu prüfen Zugang zu vertraulichen Unterlagen zu gewähren NDA Prozesse zu verwalten CRM Einträge (Zoho CRM) zu führen und Schweizer sowie EU Vorschriften einzuhalten.</p>
+
+                    <p><strong>3. Datenkategorien</strong><br>
+                    Name E Mail Institution Investorenklassifizierung Kommunikationshistorie.</p>
+
+                    <p><strong>4. Rechtsgrundlage</strong><br>
+                    DSGVO Artikel 6 und Schweizer Bundesgesetz über den Datenschutz.</p>
+
+                    <p><strong>5. Datensicherheit</strong><br>
+                    Verschlüsselte Übertragung Zugriffsbeschränkung kein Weiterverkauf keine Werbenutzung.</p>
+
+                    <p><strong>6. Datenspeicherung</strong><br>
+                    Aufbewahrung nur für regulatorische Zwecke und Management der Investorenbeziehung.</p>
+
+                    <p><strong>7. Dritte</strong><br>
+                    Zoho CRM Tools zur Einhaltung gesetzlicher Vorschriften. Keine Marketingplattformen.</p>
+
+                    <p><strong>8. Benutzerrechte</strong><br>
+                    Zugriff Korrektur Löschung Einschränkung.</p>
+
+                    <p><strong>9. Cookies</strong><br>
+                    Analytik Sitzung Sprache. Kein Profiling.</p>
+
+                    <p><strong>10. Vertraulichkeitserklärung</strong><br>
+                    Investorendaten werden streng vertraulich behandelt und nur für die private Investitionsqualifizierung verwendet.</p>
+                </div>
+            </div>
+
+            <div id="modal-terms" class="hidden">
+                <h2 class="text-2xl font-display font-bold text-white mb-2">Allgemeine Geschäftsbedingungen</h2>
+                <p class="text-[10px] text-brand-slate font-mono uppercase mb-6">Stand: Januar 2026</p>
+                <div class="prose prose-invert prose-sm text-brand-slate text-xs leading-relaxed space-y-4">
+                    <p>Diese Bedingungen regeln die Nutzung des Investorenportals der Fieldoo AG und den Zugang zu privaten Investitionsinformationen.</p>
+                    <ul class="list-disc pl-4 space-y-2">
+                        <li><strong>Kein öffentliches Angebot:</strong> Die hierin enthaltenen Informationen stellen kein öffentliches Angebot dar.</li>
+                        <li><strong>Keine Aufforderung:</strong> Die bereitgestellten Informationen sind keine Aufforderung zur Investition.</li>
+                        <li><strong>Qualifizierte Investoren:</strong> Der Zugang ist auf qualifizierte Investoren gemäß KAG Schweiz beschränkt.</li>
+                        <li><strong>NDA Anforderung:</strong> Der vollständige Zugang erfordert ein unterzeichnetes Non Disclosure Agreement.</li>
+                        <li><strong>Keine Weiterverbreitung:</strong> Materialien dürfen ohne schriftliche Zustimmung nicht weitergegeben werden.</li>
+                        <li><strong>Gerichtsstand:</strong> Unterliegt den Gesetzen der Schweiz.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="modal-imprint" class="hidden">
+                <h2 class="text-2xl font-display font-bold text-white mb-6">Impressum</h2>
+                <div class="text-xs text-brand-slate leading-loose">
+                    <p><strong class="text-white">Firmenname:</strong> Fieldoo AG</p>
+                    <p><strong class="text-white">Adresse:</strong> Nüschelerstrasse 45 8001 Zürich Schweiz</p>
+                    <p><strong class="text-white">Handelsregister:</strong> CHE 195.865.186</p>
+                    <p><strong class="text-white">Gerichtsstand:</strong> Schweiz</p>
+                    <p class="mt-4"><strong class="text-white">Zweck:</strong> Entwicklung und Kommerzialisierung von Technologie in der Sportrekrutierung und Talentbewertung.</p>
+                </div>
+            </div>
+
+            <div id="modal-faq" class="hidden">
+                <h2 class="text-2xl font-display font-bold text-white mb-6">Investoren FAQ</h2>
+                <div class="space-y-4">
+                    <div class="border border-white/5 rounded p-4">
+                        <h4 class="text-white text-sm font-bold mb-2">F. Erhalte ich eine echte Aktie?</h4>
+                        <p class="text-xs text-brand-slate">Ja. Jeder Token repräsentiert eine rechtlich eingetragene Schweizer Aktie.</p>
+                    </div>
+                    <div class="border border-white/5 rounded p-4">
+                        <h4 class="text-white text-sm font-bold mb-2">F. Ist dies eine Kryptowährung?</h4>
+                        <p class="text-xs text-brand-slate">Nein. Es ist ein Aktientoken der Aktienbesitz darstellt und dem Schweizer Obligationenrecht OR 973d unterliegt.</p>
+                    </div>
+                    <div class="border border-white/5 rounded p-4">
+                        <h4 class="text-white text-sm font-bold mb-2">F. Kann ich Aktien verkaufen?</h4>
+                        <p class="text-xs text-brand-slate">Ja über den Aktionariat Brokerbot vorbehaltlich Liquidität oder über einen privaten Sekundärverkauf.</p>
+                    </div>
+                    <div class="border border-white/5 rounded p-4">
+                        <h4 class="text-white text-sm font-bold mb-2">F. Ist der Preis an Krypto Volatilität gebunden?</h4>
+                        <p class="text-xs text-brand-slate">Nein. Aktien werden in CHF bewertet basierend auf der Unternehmensbewertung unabhängig von Krypto Marktzyklen.</p>
+                    </div>
+                    <div class="border border-white/5 rounded p-4">
+                        <h4 class="text-white text-sm font-bold mb-2">F. Erscheine ich im Aktienbuch?</h4>
+                        <p class="text-xs text-brand-slate">Ja. Die Eintragung ist für Aktionäre verpflichtend.</p>
+                    </div>
+                    <div class="border border-white/5 rounded p-4">
+                        <h4 class="text-white text-sm font-bold mb-2">F. Was sind die Risiken?</h4>
+                        <p class="text-xs text-brand-slate">Dies ist eine Aktieninvestition in ein Unternehmen in der Wachstumsphase. Kapitalverlust ist möglich. Dies ist unternehmerisches Risiko.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal-contact" class="hidden">
+                <h2 class="text-2xl font-display font-bold text-white mb-2">Zugang zur Zuteilung anfordern</h2>
+                <p class="text-xs text-brand-slate mb-6">Bitte geben Sie Ihre Daten an um das Deck und das NDA zu erhalten.</p>
+                
+                <form class="space-y-4" action="https://formsubmit.co/hendrik@fieldoo.com" method="POST">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Vorname</label>
+                            <input type="text" name="firstname" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Nachname</label>
+                            <input type="text" name="lastname" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Institutionelle E Mail</label>
+                        <input type="email" name="email" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Investorentyp</label>
+                        <select name="type" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                            <option>Private Equity / VC</option>
+                            <option>Family Office</option>
+                            <option>Qualifizierte Einzelperson</option>
+                            <option>Strategischer Partner</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 mt-4 bg-white/5 p-3 rounded border border-white/10">
+                        <input type="checkbox" required id="qualified" class="mt-1 accent-brand-gold">
+                        <label for="qualified" class="text-[10px] text-brand-slate leading-tight cursor-pointer">Ich bestätige dass ich ein qualifizierter Investor oder institutioneller Vertreter bin. Ich verstehe dass dies ein Instrument des privaten Marktes ist.</label>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-white/5 mt-4">
+                        <p class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-2 block">Investor Relations Kontakt</p>
+                        <p class="text-sm text-white font-medium">Hendrik Klein</p>
+                        <p class="text-xs text-brand-slate">Leiter Investor Relations</p>
+                        <p class="text-xs text-brand-slate">hendrik@fieldoo.com</p>
+                        <p class="text-[10px] text-brand-gold mt-2">Direkter Zugang. Keine Vermittler.</p>
+                    </div>
+
+                    <div class="pt-4">
+                        <button class="w-full btn-gold py-3 rounded text-black font-bold uppercase tracking-widest text-xs">Zugang zur Zuteilung anfordern</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Mouse Spotlight Logic ---
+    function updateMouse(e) {
+        const cards = document.getElementsByClassName("spotlight-card");
+        for(const card of cards) {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty("--mouse-x", `${x}px`);
+            card.style.setProperty("--mouse-y", `${y}px`);
+        }
+    }
+
+    // --- Scroll Reveal Logic ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // --- Mobile Menu ---
+    function toggleMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+        menu.classList.toggle('flex');
+    }
+
+    // --- Modal Logic ---
+    const overlay = document.getElementById('modal-overlay');
+    
+    function openModal(id) {
+        // Hide all inner contents
+        const modals = ['privacy', 'terms', 'imprint', 'faq', 'contact'];
+        modals.forEach(m => document.getElementById(`modal-${m}`).classList.add('hidden'));
+
+        // Show specific content
+        const content = document.getElementById(`modal-${id}`);
+        if(content) {
+            content.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeAllModals() {
+        overlay.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+</script>
+</body>
+</html>
