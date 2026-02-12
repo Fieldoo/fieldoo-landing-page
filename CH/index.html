@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="de" class="scroll-smooth">
 <head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-Y"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EH2DMMKZD8"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'UA-XXXXX-Y');
+
+    gtag('config', 'G-EH2DMMKZD8');
   </script>
 
   <meta charset="UTF-8" />
@@ -214,9 +215,17 @@
     </div>
 
     <div class="flex items-center gap-4">
-        <button onclick="openModal('contact')" class="hidden md:flex items-center gap-2 px-6 py-2.5 rounded shadow-lg btn-gold text-[10px] font-bold uppercase tracking-widest">
+        <a href="https://shares.fieldoo.com" 
+           onclick="gtag('event', 'investor_portal_click', { location: 'navbar', destination: 'shares.fieldoo.com' });"
+           class="hidden md:flex items-center gap-2 px-6 py-2.5 rounded shadow-lg btn-navy text-[10px] font-bold uppercase tracking-widest">
+           Investorenzugang
+        </a>
+
+        <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'navbar' });" 
+                class="hidden md:flex items-center gap-2 px-6 py-2.5 rounded shadow-lg btn-gold text-[10px] font-bold uppercase tracking-widest">
             Zugang zur Zuteilung anfordern
         </button>
+
         <button onclick="toggleMenu()" class="md:hidden text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
     </div>
   </div>
@@ -256,11 +265,18 @@
 
             <div class="flex flex-col gap-3 justify-center lg:justify-start items-center lg:items-start w-full mb-8">
                 <div class="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
-                    <button onclick="openModal('contact')" class="btn-gold px-8 py-3.5 rounded font-bold text-[10px] uppercase tracking-widest text-center min-w-[200px]">
+                    <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'hero' });" 
+                            class="btn-gold px-8 py-3.5 rounded font-bold text-[10px] uppercase tracking-widest text-center min-w-[200px]">
                         Zugang zur Zuteilung anfordern
                     </button>
-                    <span class="text-[9px] text-brand-slate uppercase tracking-widest pt-3 sm:pt-0 flex items-center">Anträge werden manuell geprüft</span>
+                    
+                    <a href="https://shares.fieldoo.com" 
+                       onclick="gtag('event', 'investor_portal_click', { location: 'hero', destination: 'shares.fieldoo.com' });"
+                       class="btn-navy px-8 py-3.5 rounded font-bold text-[10px] uppercase tracking-widest text-center min-w-[200px] flex items-center justify-center">
+                        Investorenzugang
+                    </a>
                 </div>
+                <span class="text-[9px] text-brand-slate uppercase tracking-widest pt-3 sm:pt-0 flex items-center">Anträge werden manuell geprüft</span>
                 <p class="text-[9px] text-brand-slate/40 mt-1 max-w-xs text-center lg:text-left">
                     Aktienanlagen beinhalten Risiken einschließlich des möglichen Verlusts des gesamten investierten Kapitals. Diese Zuteilung eignet sich nur für Investoren mit Verständnis für private Märkte.
                 </p>
@@ -327,10 +343,12 @@
                     <div class="h-px w-full bg-white/10 mb-6"></div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="openModal('contact')" class="py-3 rounded bg-white text-black font-bold text-[10px] uppercase tracking-widest hover:bg-brand-gold transition-colors">
+                        <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'deal_card' });" 
+                                class="py-3 rounded bg-white text-black font-bold text-[10px] uppercase tracking-widest hover:bg-brand-gold transition-colors">
                             Zuteilung anfordern
                         </button>
-                        <button onclick="openModal('contact')" class="py-3 rounded border border-white/20 text-white font-bold text-[10px] uppercase tracking-widest hover:border-brand-gold hover:text-brand-gold transition-colors">
+                        <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'deal_card' });" 
+                                class="py-3 rounded border border-white/20 text-white font-bold text-[10px] uppercase tracking-widest hover:border-brand-gold hover:text-brand-gold transition-colors">
                             NDA unterzeichnen
                         </button>
                     </div>
@@ -549,7 +567,7 @@
         </p>
         
         <div class="flex flex-col md:flex-row gap-4 justify-center">
-            <button onclick="openModal('contact')" class="btn-gold px-10 py-4 rounded font-bold text-[10px] uppercase tracking-widest inline-block">
+            <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'footer' });" class="btn-gold px-10 py-4 rounded font-bold text-[10px] uppercase tracking-widest inline-block">
                 Zugang zur Zuteilung anfordern
             </button>
         </div>
@@ -734,20 +752,29 @@
                 <h2 class="text-2xl font-display font-bold text-white mb-2">Zugang zur Zuteilung anfordern</h2>
                 <p class="text-xs text-brand-slate mb-6">Bitte geben Sie Ihre Daten an um das Deck und das NDA zu erhalten.</p>
                 
-                <form class="space-y-4" action="https://formsubmit.co/hendrik@fieldoo.com" method="POST">
+                <div id="contact-success-message" class="hidden text-center py-10">
+                    <div class="text-brand-gold text-4xl mb-4">✓</div>
+                    <h3 class="text-2xl font-display font-bold text-white mb-2">Nachricht gesendet</h3>
+                    <p class="text-xs text-brand-slate">Unser Team wird sich in Kürze bei Ihnen melden.</p>
+                </div>
+
+                <form id="allocation-form" class="space-y-4" action="https://formsubmit.co/hendrik@fieldoo.com" method="POST">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Vorname</label>
-                            <input type="text" name="firstname" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                            <input type="text" name="firstname" required class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
                         </div>
                         <div>
                             <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Nachname</label>
-                            <input type="text" name="lastname" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                            <input type="text" name="lastname" required class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
                         </div>
                     </div>
                     <div>
                         <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Institutionelle E Mail</label>
-                        <input type="email" name="email" class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
+                        <input type="email" name="email" required class="w-full bg-[#020408] border border-white/10 rounded p-3 text-white text-sm focus:border-brand-gold outline-none transition-colors">
                     </div>
                     <div>
                         <label class="text-[10px] uppercase text-brand-slate font-bold tracking-widest mb-1 block">Investorentyp</label>
@@ -773,7 +800,7 @@
                     </div>
 
                     <div class="pt-4">
-                        <button class="w-full btn-gold py-3 rounded text-black font-bold uppercase tracking-widest text-xs">Zugang zur Zuteilung anfordern</button>
+                        <button type="submit" class="w-full btn-gold py-3 rounded text-black font-bold uppercase tracking-widest text-xs">Zugang zur Zuteilung anfordern</button>
                     </div>
                 </form>
             </div>
@@ -782,7 +809,113 @@
     </div>
 </div>
 
+<div id="confirmation-overlay" class="hidden fixed inset-0 z-[200] bg-[#020408] flex items-center justify-center">
+    <div class="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
+         <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-[#C5A059] opacity-10 blur-[100px]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-md w-full p-8 text-center animate-blob">
+        <div class="w-16 h-16 rounded-full bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center mx-auto mb-8">
+            <svg class="w-8 h-8 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        
+        <h1 class="text-3xl font-display font-bold text-white mb-4">Vielen Dank.</h1>
+        <p class="text-brand-slate text-sm leading-relaxed mb-8">
+            Ihre Anfrage ist eingegangen. <br>
+            Unser Team wird sich in Kürze bei Ihnen melden.
+        </p>
+        
+        <a href="/" onclick="window.location.reload(); return false;" class="inline-block btn-gold px-8 py-3 rounded font-bold text-[10px] uppercase tracking-widest cursor-pointer">
+            Zurück zur Startseite
+        </a>
+    </div>
+</div>
+
 <script>
+    // --- Scroll Depth Tracking (75%) ---
+    let scrollDepthTracked = false;
+    window.addEventListener('scroll', function() {
+        if(!scrollDepthTracked && (window.scrollY + window.innerHeight) >= (document.body.scrollHeight * 0.75)) {
+            gtag('event', 'scroll_depth', { percent: 75 });
+            scrollDepthTracked = true;
+        }
+    });
+
+    // --- Section Visibility Tracking ---
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // UI Reveal (Existing)
+                entry.target.classList.add('active');
+
+                // Analytics (New)
+                const id = entry.target.id;
+                const trackableSections = ['structure', 'financials', 'company'];
+                // Check if it's a section we want to track and hasn't been tracked yet
+                if (id && trackableSections.includes(id) && !entry.target.dataset.analyticsTracked) {
+                    gtag('event', 'section_view', { section_name: id });
+                    entry.target.dataset.analyticsTracked = "true";
+                }
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal, section[id]').forEach(el => sectionObserver.observe(el));
+
+    // --- Form Handling & Events ---
+    const form = document.getElementById('allocation-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = "Wird gesendet..."; // German translation
+            btn.disabled = true;
+
+            // Track Attempt (Legacy)
+            gtag('event', 'contact_form_submit');
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // UI Update
+                    form.style.display = 'none';
+                    document.getElementById('contact-success-message').classList.remove('hidden');
+                    
+                    // NEW: Track Conversion (Replacement Event)
+                    // Keep event parameters in English for unified analytics
+                    gtag('event', 'investor_lead_submitted', {
+                        source: 'allocation_form'
+                    });
+                    
+                    // Show Full Screen Confirmation Overlay after short delay
+                    setTimeout(() => {
+                        closeAllModals(); // Close the modal
+                        document.getElementById('confirmation-overlay').classList.remove('hidden'); // Show overlay
+                    }, 2000);
+                } else {
+                    alert('Es gab einen Fehler beim Senden Ihrer Nachricht. Bitte versuchen Sie es erneut.');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Es gab einen Fehler beim Senden Ihrer Nachricht.');
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+        });
+    }
+
     // --- Mouse Spotlight Logic ---
     function updateMouse(e) {
         const cards = document.getElementsByClassName("spotlight-card");
@@ -795,28 +928,45 @@
         }
     }
 
-    // --- Scroll Reveal Logic ---
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
     // --- Mobile Menu ---
     function toggleMenu() {
         const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('hidden');
-        menu.classList.toggle('flex');
+        const overlay = document.getElementById('modal-overlay');
+        
+        const isHidden = menu.classList.contains('hidden');
+        
+        if (isHidden) {
+            menu.classList.remove('hidden');
+            menu.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        } else {
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
+            if (overlay.classList.contains('hidden')) {
+                document.body.style.overflow = 'auto';
+            }
+        }
     }
 
-    // --- Modal Logic ---
+    // --- Modal Logic (Upgraded with Tracking) ---
     const overlay = document.getElementById('modal-overlay');
     
     function openModal(id) {
+        // 1. Analytics: Track Modal Open
+        gtag('event', 'modal_open', {
+            modal_name: id
+        });
+
+        // 2. Analytics: Track Intent Signals
+        if (id === 'privacy') {
+            gtag('event', 'legal_interest', { type: 'privacy' });
+        } else if (id === 'terms') {
+            gtag('event', 'legal_interest', { type: 'terms' });
+        } else if (id === 'faq') {
+            gtag('event', 'investor_questions', { type: 'faq' });
+        }
+
+        // 3. UI Logic
         // Hide all inner contents
         const modals = ['privacy', 'terms', 'imprint', 'faq', 'contact'];
         modals.forEach(m => document.getElementById(`modal-${m}`).classList.add('hidden'));
@@ -832,7 +982,12 @@
 
     function closeAllModals() {
         overlay.classList.add('hidden');
-        document.body.style.overflow = 'auto';
+        
+        // Only re-enable scrolling if mobile menu is hidden
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu.classList.contains('hidden')) {
+            document.body.style.overflow = 'auto';
+        }
     }
 </script>
 </body>
