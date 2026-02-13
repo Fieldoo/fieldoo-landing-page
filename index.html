@@ -7,6 +7,37 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
+    // 1. UTM Capture & Storage Logic
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+        let stored = JSON.parse(localStorage.getItem('fieldoo_utms') || '{}');
+        let hasNew = false;
+        
+        keys.forEach(key => {
+            if (params.has(key)) {
+                stored[key] = params.get(key);
+                hasNew = true;
+            }
+        });
+        
+        if (hasNew) {
+            localStorage.setItem('fieldoo_utms', JSON.stringify(stored));
+        }
+    })();
+
+    // 2. Enhanced Event Tracker (Attaches UTMs automatically)
+    window.trackEvent = function(eventName, params = {}) {
+        const utms = JSON.parse(localStorage.getItem('fieldoo_utms') || '{}');
+        const finalParams = { ...params, ...utms };
+        gtag('event', eventName, finalParams);
+        
+        // Console log for debugging
+        if(window.location.search.includes('debug=true')) {
+            console.log('Tracked:', eventName, finalParams);
+        }
+    };
+
     gtag('config', 'G-EH2DMMKZD8');
   </script>
 
@@ -211,17 +242,17 @@
         <a href="#structure" class="hover:text-white transition-colors">Structure</a>
         <a href="#financials" class="hover:text-white transition-colors">Financials</a>
         <a href="#company" class="hover:text-white transition-colors">Asset</a>
-        <button onclick="openModal('faq')" class="hover:text-brand-gold transition-colors">Investor FAQ</button>
+        <button onclick="openModal('faq'); trackEvent('menu_click', {item: 'faq'});" class="hover:text-brand-gold transition-colors">Investor FAQ</button>
     </div>
 
     <div class="flex items-center gap-4">
         <a href="https://shares.fieldoo.com" 
-           onclick="gtag('event', 'investor_portal_click', { location: 'navbar', destination: 'shares.fieldoo.com' });"
+           onclick="trackEvent('investor_portal_click', { location: 'navbar', destination: 'shares.fieldoo.com' });"
            class="hidden md:flex items-center gap-2 px-6 py-2.5 rounded shadow-lg btn-navy text-[10px] font-bold uppercase tracking-widest">
            Investor Access
         </a>
 
-        <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'navbar' });" 
+        <button onclick="openModal('contact'); trackEvent('reserve_pass_click', { location: 'navbar' });" 
                 class="hidden md:flex items-center gap-2 px-6 py-2.5 rounded shadow-lg btn-gold text-[10px] font-bold uppercase tracking-widest">
             Request Allocation Access
         </button>
@@ -236,7 +267,7 @@
     <a href="#structure" onclick="toggleMenu()" class="text-xl font-display font-medium text-white hover:text-brand-gold">Structure</a>
     <a href="#financials" onclick="toggleMenu()" class="text-xl font-display font-medium text-white hover:text-brand-gold">Financials</a>
     <button onclick="toggleMenu(); openModal('faq')" class="text-xl font-display font-medium text-white hover:text-brand-gold">Investor FAQ</button>
-    <button onclick="toggleMenu(); openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'mobile_menu' });" class="text-xl font-display font-medium text-brand-gold hover:text-white mt-4">Request Access</button>
+    <button onclick="toggleMenu(); openModal('contact'); trackEvent('reserve_pass_click', { location: 'mobile_menu' });" class="text-xl font-display font-medium text-brand-gold hover:text-white mt-4">Request Access</button>
 </div>
 
 <section class="relative pt-32 pb-20 px-6 min-h-screen flex items-center justify-center overflow-hidden">
@@ -266,13 +297,13 @@
 
             <div class="flex flex-col gap-3 justify-center lg:justify-start items-center lg:items-start w-full mb-8">
                 <div class="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
-                    <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'hero' });" 
+                    <button onclick="openModal('contact'); trackEvent('reserve_pass_click', { location: 'hero' });" 
                             class="btn-gold px-8 py-3.5 rounded font-bold text-[10px] uppercase tracking-widest text-center min-w-[200px]">
                         Request Allocation Access
                     </button>
                     
                     <a href="https://shares.fieldoo.com" 
-                       onclick="gtag('event', 'investor_portal_click', { location: 'hero', destination: 'shares.fieldoo.com' });"
+                       onclick="trackEvent('investor_portal_click', { location: 'hero', destination: 'shares.fieldoo.com' });"
                        class="btn-navy px-8 py-3.5 rounded font-bold text-[10px] uppercase tracking-widest text-center min-w-[200px] flex items-center justify-center">
                         Investor Access
                     </a>
@@ -345,11 +376,11 @@
                     <div class="h-px w-full bg-white/10 mb-6"></div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'deal_card' });" 
+                        <button onclick="openModal('contact'); trackEvent('reserve_pass_click', { location: 'deal_card' });" 
                                 class="py-3 rounded bg-white text-black font-bold text-[10px] uppercase tracking-widest hover:bg-brand-gold transition-colors">
                             Request Allocation
                         </button>
-                        <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'deal_card' });" 
+                        <button onclick="openModal('contact'); trackEvent('reserve_pass_click', { location: 'deal_card_nda' });" 
                                 class="py-3 rounded border border-white/20 text-white font-bold text-[10px] uppercase tracking-widest hover:border-brand-gold hover:text-brand-gold transition-colors">
                             Sign NDA
                         </button>
@@ -569,7 +600,7 @@
         </p>
         
         <div class="flex flex-col md:flex-row gap-4 justify-center">
-            <button onclick="openModal('contact'); gtag('event', 'reserve_pass_click', { location: 'footer' });" class="btn-gold px-10 py-4 rounded font-bold text-[10px] uppercase tracking-widest inline-block">
+            <button onclick="openModal('contact'); trackEvent('reserve_pass_click', { location: 'footer' });" class="btn-gold px-10 py-4 rounded font-bold text-[10px] uppercase tracking-widest inline-block">
                 Request Allocation Access
             </button>
         </div>
@@ -605,7 +636,7 @@
             <h4 class="text-white font-bold font-display text-sm mb-2">Structure</h4>
             <a href="#structure" class="text-xs text-brand-slate hover:text-brand-gold transition-colors">Shares</a>
             <a href="#financials" class="text-xs text-brand-slate hover:text-brand-gold transition-colors">Projections</a>
-            <button onclick="openModal('faq')" class="text-left text-xs text-brand-slate hover:text-brand-gold transition-colors">Investor FAQ</button>
+            <button onclick="openModal('faq'); trackEvent('menu_click', {item: 'faq'});" class="text-left text-xs text-brand-slate hover:text-brand-gold transition-colors">Investor FAQ</button>
         </div>
 
         <div class="flex flex-col gap-4">
@@ -833,12 +864,239 @@
     </div>
 </div>
 
+<style>
+  /* Chatbot Variables (Fieldoo Theme) */
+  :root {
+    --chat-accent: #C5A059; /* Brand Gold */
+    --chat-bg: #0B1120;     /* Navy */
+    --chat-text: #F8FAFC;
+  }
+
+  #fieldoo-chat-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--chat-accent), #E5C578);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  #fieldoo-chat-trigger:hover { transform: scale(1.1); }
+
+  #fieldoo-chat-window {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 350px;
+    max-width: calc(100vw - 48px);
+    background: var(--chat-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(197, 160, 89, 0.1);
+    z-index: 10000;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+  }
+
+  #fieldoo-chat-window.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .chat-header {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .chat-header h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .chat-body {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .chat-step { display: none; }
+  .chat-step.active { display: block; animation: fadeIn 0.4s ease forwards; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-bubble {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    border-radius: 0 12px 12px 12px;
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    border-left: 2px solid var(--chat-accent);
+  }
+
+  .chat-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 10px;
+    color: white;
+    margin-bottom: 10px;
+    outline: none;
+    font-size: 13px;
+  }
+
+  .chat-input:focus { border-color: var(--chat-accent); }
+
+  .chat-btn {
+    width: 100%;
+    background: var(--chat-accent);
+    color: #020408;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+  }
+
+  .chat-btn:hover { background: #E5C578; box-shadow: 0 0 15px rgba(197, 160, 89, 0.4); }
+</style>
+
+<div id="fieldoo-chat-trigger" onclick="toggleFieldooBot()">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#020408" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+
+<div id="fieldoo-chat-window">
+  <div class="chat-header">
+    <h4>Fieldoo <span style="color:var(--chat-accent)">Agent</span></h4>
+    <button onclick="toggleFieldooBot()" style="color:gray; background:none; border:none; cursor:pointer;">&times;</button>
+  </div>
+  <div class="chat-body">
+    <form id="fieldoo-chat-form">
+      <div class="chat-step active" id="bot-step-1">
+        <div class="chat-bubble">Hello. Welcome to Fieldoo AG. <br>I can assist with allocation inquiries. What is your name?</div>
+        <input type="text" name="name" class="chat-input" placeholder="Your Full Name" required>
+        <button type="button" class="chat-btn" onclick="nextBotStep(2)">Next</button>
+      </div>
+
+      <div class="chat-step" id="bot-step-2">
+        <div class="chat-bubble">Thank you. Please provide your institutional email address for verification.</div>
+        <input type="email" name="email" class="chat-input" placeholder="name@institution.com" required>
+        <button type="button" class="chat-btn" onclick="nextBotStep(3)">Next</button>
+      </div>
+
+      <div class="chat-step" id="bot-step-3">
+        <div class="chat-bubble">Is there a specific investment tranche or query you are interested in?</div>
+        <textarea name="message" class="chat-input" rows="3" placeholder="I'm interested in the 2026 allocation..."></textarea>
+        <input type="hidden" name="_subject" value="New Lead: Fieldoo Agent">
+        <input type="hidden" name="_captcha" value="false">
+        <button type="submit" class="chat-btn">Submit Inquiry</button>
+      </div>
+
+      <div class="chat-step" id="bot-step-success">
+        <div class="chat-bubble" style="border-left: 3px solid #10b981;">Request received. <br>Our Investor Relations team will review your profile and contact you shortly.</div>
+        <button type="button" class="chat-btn" style="background:transparent; border:1px solid var(--chat-accent); color:var(--chat-accent)" onclick="toggleFieldooBot()">Close</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleFieldooBot() {
+    const win = document.getElementById('fieldoo-chat-window');
+    const isActive = win.classList.toggle('active');
+    if(isActive && typeof trackEvent === 'function') {
+        trackEvent('open_modal', { modal_name: 'fieldoo_agent' });
+    }
+  }
+
+  function nextBotStep(stepNumber) {
+    const currentStep = document.querySelector('.chat-step.active');
+    const input = currentStep.querySelector('input, textarea');
+    
+    if (input && input.hasAttribute('required') && !input.value) {
+      input.style.borderColor = '#ef4444'; // Red for error
+      return;
+    }
+    if(input) input.style.borderColor = 'rgba(255,255,255,0.1)'; // Reset
+
+    // Analytics hook
+    if (stepNumber === 2 && typeof trackEvent === 'function') {
+      trackEvent('form_start', { form_name: 'fieldoo_agent' });
+    }
+
+    document.querySelectorAll('.chat-step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`bot-step-${stepNumber}`).classList.add('active');
+  }
+
+  document.getElementById('fieldoo-chat-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+
+    // Get UTMs
+    const utmData = JSON.parse(localStorage.getItem('fieldoo_utms') || '{}');
+    const formData = new FormData(form);
+    Object.keys(utmData).forEach(key => formData.append(key, utmData[key]));
+
+    fetch('https://formsubmit.co/ajax/hendrik@fieldoo.com', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        if (typeof trackEvent === 'function') {
+            trackEvent('form_submit', { form_name: 'fieldoo_agent' });
+        }
+        document.querySelectorAll('.chat-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('bot-step-success').classList.add('active');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      btn.innerText = "Error. Retry.";
+      btn.disabled = false;
+    });
+  });
+</script>
 <script>
     // --- Scroll Depth Tracking (75%) ---
     let scrollDepthTracked = false;
     window.addEventListener('scroll', function() {
         if(!scrollDepthTracked && (window.scrollY + window.innerHeight) >= (document.body.scrollHeight * 0.75)) {
-            gtag('event', 'scroll_depth', { percent: 75 });
+            trackEvent('scroll_depth', { percent: 75 });
             scrollDepthTracked = true;
         }
     });
@@ -853,9 +1111,8 @@
                 // Analytics (New)
                 const id = entry.target.id;
                 const trackableSections = ['structure', 'financials', 'company'];
-                // Check if it's a section we want to track and hasn't been tracked yet
                 if (id && trackableSections.includes(id) && !entry.target.dataset.analyticsTracked) {
-                    gtag('event', 'section_view', { section_name: id });
+                    trackEvent('section_view', { section_name: id });
                     entry.target.dataset.analyticsTracked = "true";
                 }
             }
@@ -864,7 +1121,7 @@
 
     document.querySelectorAll('.reveal, section[id]').forEach(el => sectionObserver.observe(el));
 
-    // --- Form Handling & Events ---
+    // --- Form Handling & Events (Main Allocation Form) ---
     const form = document.getElementById('allocation-form');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -874,33 +1131,28 @@
             btn.innerText = "Sending...";
             btn.disabled = true;
 
-            // Track Attempt (Legacy)
-            gtag('event', 'contact_form_submit');
+            trackEvent('contact_form_start', { form: 'allocation_main' });
 
             const formData = new FormData(form);
+            // Append UTMs
+            const utms = JSON.parse(localStorage.getItem('fieldoo_utms') || '{}');
+            Object.keys(utms).forEach(key => formData.append(key, utms[key]));
 
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             })
             .then(response => {
                 if (response.ok) {
-                    // UI Update
                     form.style.display = 'none';
                     document.getElementById('contact-success-message').classList.remove('hidden');
                     
-                    // NEW: Track Conversion (Replacement Event)
-                    gtag('event', 'investor_lead_submitted', {
-                        source: 'allocation_form'
-                    });
+                    trackEvent('investor_lead_submitted', { source: 'allocation_form' });
                     
-                    // Show Full Screen Confirmation Overlay after short delay
                     setTimeout(() => {
-                        closeAllModals(); // Close the modal
-                        document.getElementById('confirmation-overlay').classList.remove('hidden'); // Show overlay
+                        closeAllModals(); 
+                        document.getElementById('confirmation-overlay').classList.remove('hidden'); 
                     }, 2000);
                 } else {
                     alert('There was an error sending your message. Please try again.');
@@ -954,25 +1206,17 @@
     
     function openModal(id) {
         // 1. Analytics: Track Modal Open
-        gtag('event', 'modal_open', {
-            modal_name: id
-        });
+        trackEvent('modal_open', { modal_name: id });
 
         // 2. Analytics: Track Intent Signals
-        if (id === 'privacy') {
-            gtag('event', 'legal_interest', { type: 'privacy' });
-        } else if (id === 'terms') {
-            gtag('event', 'legal_interest', { type: 'terms' });
-        } else if (id === 'faq') {
-            gtag('event', 'investor_questions', { type: 'faq' });
-        }
+        if (id === 'privacy') trackEvent('legal_interest', { type: 'privacy' });
+        else if (id === 'terms') trackEvent('legal_interest', { type: 'terms' });
+        else if (id === 'faq') trackEvent('investor_questions', { type: 'faq' });
 
         // 3. UI Logic
-        // Hide all inner contents
         const modals = ['privacy', 'terms', 'imprint', 'faq', 'contact'];
         modals.forEach(m => document.getElementById(`modal-${m}`).classList.add('hidden'));
 
-        // Show specific content
         const content = document.getElementById(`modal-${id}`);
         if(content) {
             content.classList.remove('hidden');
@@ -983,8 +1227,6 @@
 
     function closeAllModals() {
         overlay.classList.add('hidden');
-        
-        // Only re-enable scrolling if mobile menu is hidden
         const mobileMenu = document.getElementById('mobile-menu');
         if (mobileMenu.classList.contains('hidden')) {
             document.body.style.overflow = 'auto';
